@@ -15,8 +15,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-  zipkin:
-    base-url: http://localhost:9411
 eureka:
   client:
     service-url:
@@ -27,3 +25,6 @@ management:
   tracing:
     sampling:
       probability: 1.0
+#  zipkin:
+#    tracing:
+#      endpoint: http://localhost:9411

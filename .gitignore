@@ -1,4 +1,9 @@
+**/target
+/target 
+target/
+target/*
 my-app.iml
 .idea/
 fraud/target
 customer/target
+**/target/**

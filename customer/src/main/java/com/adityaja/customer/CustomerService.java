@@ -1,5 +1,6 @@
 package com.adityaja.customer;
 
+import com.adityaja.amqp.RabbitMQMessageProducer;
 import com.adityaja.clients.fraud.FraudCheckResponse;
 import com.adityaja.clients.fraud.FraudClient;
 import com.adityaja.clients.notification.NotificationClient;
@@ -12,12 +13,10 @@ import org.springframework.stereotype.Service;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    //private final CustomerConfig customerConfig;
     private final CustomerConfig customerConfig;
-
     private final FraudClient fraudClient;
-
     private final NotificationClient notificationClient;
+    private final RabbitMQMessageProducer rabbitMQMessageProducer;
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -37,11 +36,19 @@ public class CustomerService {
             throw new IllegalStateException("fraudster");
         }
 
-        notificationClient.sendNotification(new NotificationRequest(
+//        notificationClient.sendNotification(new NotificationRequest(
+//                customer.getFirstName() + " " + customer.getLastName(),
+//                customer.getEmail(),
+//                "Hi " + customer.getFirstName() + "\nCongratulations! You have successfully registered")
+//        );
+        NotificationRequest notificationRequest = new NotificationRequest(
                 customer.getFirstName() + " " + customer.getLastName(),
                 customer.getEmail(),
-                "Hi " + customer.getFirstName() + "\nCongratulations! You have successfully registered")
-        );
+                "Hi " + customer.getFirstName() + "\nCongratulations! You have successfully registered");
+
+        rabbitMQMessageProducer.publish(notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key");
 
     }
 }

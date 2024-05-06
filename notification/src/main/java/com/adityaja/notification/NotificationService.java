@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-
     private final String SENDER = "adityaja@amazon.com";
 
     public void send(NotificationRequest notificationRequest) {
